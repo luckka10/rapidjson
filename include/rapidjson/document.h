@@ -22,6 +22,8 @@
 #include "internal/strfunc.h"
 #include "memorystream.h"
 #include "encodedstream.h"
+#include <iostream>
+#include <string>
 #include <new>      // placement new
 #include <limits>
 #ifdef __cpp_lib_three_way_comparison
@@ -1872,7 +1874,10 @@ public:
         \return The value itself for fluent API.
         \post IsString() == true && GetString() == s && GetStringLength() == s.length
     */
-    GenericValue& SetString(StringRefType s) { this->~GenericValue(); SetStringRaw(s); return *this; }
+    GenericValue& SetString(StringRefType s) { 
+        
+        this->~GenericValue(); SetStringRaw(s); return *this; 
+        }
 
     //! Set this value as a string by copying from source string.
     /*! This version has better performance with supplied length, and also support string containing null character.
@@ -2440,6 +2445,9 @@ private:
 
     //! Initialize this value as copy string with initial data, without calling destructor.
     void SetStringRaw(StringRefType s, Allocator& allocator) {
+        
+        
+        
         Ch* str = 0;
         if (ShortString::Usable(s.length)) {
             data_.f.flags = kShortStringFlag;
@@ -2451,8 +2459,15 @@ private:
             str = static_cast<Ch *>(allocator.Malloc((s.length + 1) * sizeof(Ch)));
             SetStringPointer(str);
         }
+
         std::memcpy(str, s, s.length * sizeof(Ch));
         str[s.length] = '\0';
+        for(unsigned int i=0; i< s.length-1;i++){
+            std::cout<<i<<": "<<str[i]<<std::endl;
+            if (str[i]==92){
+                std::cout<<"Warning: \\ is not allowed in json" << std::endl;
+            }
+        }
     }
 
     //! Assignment without calling destructor

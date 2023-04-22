@@ -25,6 +25,7 @@
 #include "internal/stack.h"
 #include "internal/strtod.h"
 #include <limits>
+#include <iostream>
 
 #if defined(RAPIDJSON_SIMD) && defined(_MSC_VER)
 #include <intrin.h>
@@ -1028,7 +1029,8 @@ private:
                         if (RAPIDJSON_LIKELY(codepoint <= 0xDBFF)) {
                             // Handle UTF-16 surrogate pair
                             if (RAPIDJSON_UNLIKELY(!Consume(is, '\\') || !Consume(is, 'u')))
-                                RAPIDJSON_PARSE_ERROR(kParseErrorStringUnicodeSurrogateInvalid, escapeOffset);
+                                {std::cout<<"Invalid input"<<std::endl;
+                                RAPIDJSON_PARSE_ERROR(kParseErrorStringUnicodeSurrogateInvalid, escapeOffset);}
                             unsigned codepoint2 = ParseHex4(is, escapeOffset);
                             RAPIDJSON_PARSE_ERROR_EARLY_RETURN_VOID;
                             if (RAPIDJSON_UNLIKELY(codepoint2 < 0xDC00 || codepoint2 > 0xDFFF))
